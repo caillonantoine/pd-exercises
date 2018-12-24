@@ -1,0 +1,2 @@
+LIBRARY duck
+EXPORTS duck_tilde_setup

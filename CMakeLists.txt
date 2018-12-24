@@ -1,9 +1,12 @@
-cmake_minimum_required(VERSION 3.0)
+project(duck)
 
-project(pd_external)
+add_definitions(-DMSW)
 
-add_library(duck SHARED duck_tilde.c)
-set_target_properties(duck PROPERTIES PREFIX "" SUFFIX "~.pd_linux")
+set(SRC duck_tilde.c)
 
-add_library(pan SHARED signal_in_out_base.c)
-set_target_properties(pan PROPERTIES PREFIX "" SUFFIX "~.pd_linux")
+include_directories("C:/Program Files (x86)/pd/include")
+link_directories("C:/Program Files (x86)/pd/bin")
+
+add_library(duck SHARED ${SRC} duck.def)
+
+target_link_libraries(duck pd)
