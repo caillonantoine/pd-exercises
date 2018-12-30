@@ -40,8 +40,8 @@ t_int *cross_synth_tilde_perform(t_int *w)
 
   for (int i=0; i<BUFFER_SIZE-n; i++)
   {
-    x->buffer_1[i] = x->buffer_1[i+n];
-    x->buffer_2[i] = x->buffer_2[i+n];
+    x->buffer_1[i].r = x->buffer_1[i+n].r;
+    x->buffer_2[i].r = x->buffer_2[i+n].r;
 
   }
 
@@ -51,7 +51,22 @@ t_int *cross_synth_tilde_perform(t_int *w)
     x->buffer_2[i+BUFFER_SIZE-n].r = in2[i];
   }
 
+  kiss_fft(x->fft_cfg, x->buffer_1, x->fftout_1);
+  kiss_fft(x->fft_cfg, x->buffer_2, x->fftout_2);
 
+  //SPECTRAL MODIFICATIONS
+
+  
+
+  //END OF SPECTRAL MODIFICATIONS
+
+
+  kiss_fft(x->ifft_cfg, x->fftout_1, x->ifftout);
+
+  for (int i=0; i<n; i++)
+  {
+    out[i] = x->ifftout[BUFFER_SIZE-n+i].r;
+  }
 
   return (w+6);
 }
@@ -85,11 +100,13 @@ void *cross_synth_tilde_new(t_floatarg f)
 
   //FFT STUFF
 
-  x->fft_cfg  = kiss_fft_alloc(BUFFER_SIZE, 0 ,0,0 );
+  x->fft_cfg  = kiss_fft_alloc(BUFFER_SIZE, 0 ,0, 0);
   x->ifft_cfg = kiss_fft_alloc(BUFFER_SIZE, 1, 0, 0);
   x->buffer_1 = (kiss_fft_cpx*) malloc(BUFFER_SIZE*sizeof(kiss_fft_cpx));
   x->buffer_2 = (kiss_fft_cpx*) malloc(BUFFER_SIZE*sizeof(kiss_fft_cpx));
-
+  x->fftout_1 = (kiss_fft_cpx*) malloc(BUFFER_SIZE*sizeof(kiss_fft_cpx));
+  x->fftout_2 = (kiss_fft_cpx*) malloc(BUFFER_SIZE*sizeof(kiss_fft_cpx));
+  x->ifftout  = (kiss_fft_cpx*) malloc(BUFFER_SIZE*sizeof(kiss_fft_cpx));
   return (void *)x;
 }
 
