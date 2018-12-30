@@ -3,7 +3,7 @@
 #include "kiss_fft/kiss_fft.h"
 #include "stdlib.h"
 
-#define BUFFER_SIZE 2048
+#define BUFFER_SIZE 4096
 
 static t_class *cross_synth_tilde_class;
 
@@ -56,7 +56,14 @@ t_int *cross_synth_tilde_perform(t_int *w)
 
   //SPECTRAL MODIFICATIONS
 
-  
+  float mag;
+
+  for (int i=0; i<BUFFER_SIZE; i++)
+  {
+    mag = (sqrt(pow(x->fftout_2[i].r,2) + pow(x->fftout_2[i].i,2)))/BUFFER_SIZE;
+    x->fftout_1[i].r *= mag;
+    x->fftout_1[i].i *= mag;
+  }
 
   //END OF SPECTRAL MODIFICATIONS
 
@@ -65,7 +72,7 @@ t_int *cross_synth_tilde_perform(t_int *w)
 
   for (int i=0; i<n; i++)
   {
-    out[i] = x->ifftout[BUFFER_SIZE-n+i].r;
+    out[i] = x->ifftout[BUFFER_SIZE-n+i].r/BUFFER_SIZE;
   }
 
   return (w+6);
@@ -107,6 +114,21 @@ void *cross_synth_tilde_new(t_floatarg f)
   x->fftout_1 = (kiss_fft_cpx*) malloc(BUFFER_SIZE*sizeof(kiss_fft_cpx));
   x->fftout_2 = (kiss_fft_cpx*) malloc(BUFFER_SIZE*sizeof(kiss_fft_cpx));
   x->ifftout  = (kiss_fft_cpx*) malloc(BUFFER_SIZE*sizeof(kiss_fft_cpx));
+
+  for (int i=0; i<BUFFER_SIZE; i++)
+  {
+    x->buffer_1[i].r = 0;
+    x->buffer_1[i].i = 0;
+    x->buffer_2[i].r = 0;
+    x->buffer_2[i].i = 0;
+    x->fftout_1[i].r = 0;
+    x->fftout_1[i].i = 0;
+    x->fftout_2[i].r = 0;
+    x->fftout_2[i].i = 0;
+    x->ifftout[i].r  = 0;
+    x->ifftout[i].i  = 0;
+  }
+
   return (void *)x;
 }
 
