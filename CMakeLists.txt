@@ -1,12 +1,12 @@
-project(duck)
+cmake_minimum_required(VERSION 3.0)
 
-add_definitions(-DMSW)
+project(pd-exercises)
 
 set(SRC duck_tilde.c)
 
-include_directories("C:/Program Files (x86)/pd/include")
-link_directories("C:/Program Files (x86)/pd/bin")
+add_library(duck SHARED ${SRC})
 
-add_library(duck SHARED ${SRC} duck.def)
+set_target_properties(duck PROPERTIES PREFIX "" SUFFIX "~.pd_linux")
 
-target_link_libraries(duck pd)
+
+#target_link_libraries(duck pd)

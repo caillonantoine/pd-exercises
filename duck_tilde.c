@@ -5,9 +5,9 @@ static t_class *duck_tilde_class;
 
 typedef struct _duck_tilde {
   t_object  x_obj;
-  
+
   t_sample f;
-  
+
   float power;
   float amplitude;
   float time;
@@ -16,8 +16,8 @@ typedef struct _duck_tilde {
   t_inlet *x_in3;
   t_inlet *x_in4;
   t_outlet*x_out;
-  
-  
+
+
 } t_duck_tilde;
 
 t_int *duck_tilde_perform(t_int *w)
@@ -27,16 +27,16 @@ t_int *duck_tilde_perform(t_int *w)
   t_sample  *in2 =    (t_sample *)(w[3]);
   t_sample  *out =    (t_sample *)(w[4]);
   int          n =           (int)(w[5]);
-  
+
   x->power = x->power * x->time;
   int i;
   for (i=0;i<n;i++)
   {
       x->power += (1-x->time)*pow(*in1++,2)/n;
   }
-  
+
   while (n--) *out++ = *in2++ * 1/(1+ x->amplitude*x->power);
-  
+
   return (w+6);
 }
 
